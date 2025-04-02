@@ -129,7 +129,7 @@ export default function ContactPage() {
                   <div>
                     <p className="font-medium text-slate-700 dark:text-slate-300">Email</p>
                     <a href="mailto:info@sentinews.com" className="text-primary hover:underline">
-                      info@sentinews.com
+                      nayanyash11@gmail.com
                     </a>
                   </div>
                 </div>
@@ -140,19 +140,25 @@ export default function ContactPage() {
               <h3 className="text-lg font-semibold mb-4 text-slate-800 dark:text-slate-100">Connect With Us</h3>
               <div className="flex space-x-4">
                 <a
-                  href="#"
+                  href="https://x.com/yashnayan2914"
+                  target="_blank"
+                  rel="noopener noreferrer"
                   className="p-2 bg-slate-100 dark:bg-slate-800 rounded-full hover:bg-primary/10 transition-colors"
                 >
                   <Twitter className="h-5 w-5 text-primary" />
                 </a>
                 <a
-                  href="#"
+                  href="https://github.com/yashnayan8795"
+                  target="_blank"
+                  rel="noopener noreferrer"
                   className="p-2 bg-slate-100 dark:bg-slate-800 rounded-full hover:bg-primary/10 transition-colors"
                 >
                   <Github className="h-5 w-5 text-primary" />
                 </a>
                 <a
-                  href="#"
+                  href="https://www.linkedin.com/in/yash-nayan"
+                  target="_blank"
+                  rel="noopener noreferrer"
                   className="p-2 bg-slate-100 dark:bg-slate-800 rounded-full hover:bg-primary/10 transition-colors"
                 >
                   <Linkedin className="h-5 w-5 text-primary" />
