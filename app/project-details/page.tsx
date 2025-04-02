@@ -8,90 +8,60 @@ export default function ProjectDetailsPage() {
 
         <div className="space-y-8">
           <Card className="p-6">
-            <h2 className="text-2xl font-semibold mb-4 text-slate-800 dark:text-slate-100">AI Model</h2>
+            <h2 className="text-2xl font-semibold mb-4 text-slate-800 dark:text-slate-100">Current Implementation</h2>
             <p className="text-slate-600 dark:text-slate-300 mb-4">
-              Our sentiment analysis system uses a state-of-the-art natural language processing (NLP) model based on
-              transformer architecture. The model has been fine-tuned specifically for news article analysis, with
-              special attention to detecting subtle emotional tones and biases in reporting.
+              Our sentiment analysis system uses FastAPI backend with Next.js frontend to analyze news articles. 
+              The system provides real-time sentiment analysis with interactive visualizations.
             </p>
             <div className="bg-slate-100 dark:bg-slate-800 p-4 rounded-lg">
-              <h3 className="font-medium mb-2 text-slate-800 dark:text-slate-200">Technical Specifications:</h3>
+              <h3 className="font-medium mb-2 text-slate-800 dark:text-slate-200">Key Features:</h3>
               <ul className="list-disc list-inside space-y-1 text-slate-600 dark:text-slate-300 text-sm">
-                <li>Architecture: Transformer-based neural network</li>
-                <li>Parameters: 175 million</li>
-                <li>Training corpus: 15 million news articles</li>
-                <li>Sentiment classification accuracy: 92.7%</li>
-                <li>Languages supported: English (more coming soon)</li>
+                <li>Real-time sentiment analysis of news articles</li>
+                <li>Interactive sentiment meter with color-coded feedback</li>
+                <li>Detailed sentiment breakdown visualization</li>
+                <li>Recent analyses history tracking</li>
+                <li>Dark/Light theme support</li>
               </ul>
             </div>
           </Card>
 
           <Card className="p-6">
-            <h2 className="text-2xl font-semibold mb-4 text-slate-800 dark:text-slate-100">Datasets</h2>
-            <p className="text-slate-600 dark:text-slate-300 mb-4">
-              Our model was trained on a diverse collection of news articles from various sources across the political
-              spectrum. This ensures that the model can accurately detect sentiment regardless of the publication's
-              inherent bias.
-            </p>
+            <h2 className="text-2xl font-semibold mb-4 text-slate-800 dark:text-slate-100">Technical Stack</h2>
             <div className="overflow-x-auto">
               <table className="min-w-full divide-y divide-slate-200 dark:divide-slate-700">
                 <thead className="bg-slate-100 dark:bg-slate-800">
                   <tr>
                     <th className="px-6 py-3 text-left text-xs font-medium text-slate-500 dark:text-slate-400 uppercase tracking-wider">
-                      Dataset
+                      Component
                     </th>
                     <th className="px-6 py-3 text-left text-xs font-medium text-slate-500 dark:text-slate-400 uppercase tracking-wider">
-                      Size
-                    </th>
-                    <th className="px-6 py-3 text-left text-xs font-medium text-slate-500 dark:text-slate-400 uppercase tracking-wider">
-                      Time Period
-                    </th>
-                    <th className="px-6 py-3 text-left text-xs font-medium text-slate-500 dark:text-slate-400 uppercase tracking-wider">
-                      Sources
+                      Technology
                     </th>
                   </tr>
                 </thead>
                 <tbody className="bg-white dark:bg-slate-900 divide-y divide-slate-200 dark:divide-slate-800">
                   <tr>
                     <td className="px-6 py-4 whitespace-nowrap text-sm text-slate-700 dark:text-slate-300">
-                      Primary News Corpus
+                      Frontend
                     </td>
                     <td className="px-6 py-4 whitespace-nowrap text-sm text-slate-700 dark:text-slate-300">
-                      12M articles
-                    </td>
-                    <td className="px-6 py-4 whitespace-nowrap text-sm text-slate-700 dark:text-slate-300">
-                      2018-2023
-                    </td>
-                    <td className="px-6 py-4 whitespace-nowrap text-sm text-slate-700 dark:text-slate-300">
-                      50+ major publications
+                      Next.js, TypeScript, Tailwind CSS
                     </td>
                   </tr>
                   <tr>
                     <td className="px-6 py-4 whitespace-nowrap text-sm text-slate-700 dark:text-slate-300">
-                      Human-Annotated Set
+                      Backend
                     </td>
                     <td className="px-6 py-4 whitespace-nowrap text-sm text-slate-700 dark:text-slate-300">
-                      100K articles
-                    </td>
-                    <td className="px-6 py-4 whitespace-nowrap text-sm text-slate-700 dark:text-slate-300">
-                      2020-2023
-                    </td>
-                    <td className="px-6 py-4 whitespace-nowrap text-sm text-slate-700 dark:text-slate-300">
-                      Expert-labeled
+                      FastAPI, Python
                     </td>
                   </tr>
                   <tr>
                     <td className="px-6 py-4 whitespace-nowrap text-sm text-slate-700 dark:text-slate-300">
-                      Validation Corpus
+                      Database
                     </td>
                     <td className="px-6 py-4 whitespace-nowrap text-sm text-slate-700 dark:text-slate-300">
-                      3M articles
-                    </td>
-                    <td className="px-6 py-4 whitespace-nowrap text-sm text-slate-700 dark:text-slate-300">
-                      2022-2023
-                    </td>
-                    <td className="px-6 py-4 whitespace-nowrap text-sm text-slate-700 dark:text-slate-300">
-                      25+ publications
+                      MongoDB
                     </td>
                   </tr>
                 </tbody>
@@ -103,81 +73,70 @@ export default function ProjectDetailsPage() {
             <h2 className="text-2xl font-semibold mb-4 text-slate-800 dark:text-slate-100">How It Works</h2>
             <div className="space-y-4">
               <div className="border-l-4 border-primary pl-4">
-                <h3 className="font-medium text-slate-800 dark:text-slate-200">1. Article Extraction</h3>
+                <h3 className="font-medium text-slate-800 dark:text-slate-200">1. URL Input</h3>
                 <p className="text-slate-600 dark:text-slate-300 text-sm">
-                  When you submit a URL, our system extracts the main content, removing ads, navigation, and other
-                  irrelevant elements.
+                  Users input a news article URL through the clean, responsive interface.
                 </p>
               </div>
 
               <div className="border-l-4 border-primary pl-4">
-                <h3 className="font-medium text-slate-800 dark:text-slate-200">2. Text Processing</h3>
+                <h3 className="font-medium text-slate-800 dark:text-slate-200">2. Content Analysis</h3>
                 <p className="text-slate-600 dark:text-slate-300 text-sm">
-                  The extracted text is tokenized, normalized, and prepared for analysis by our NLP pipeline.
+                  The FastAPI backend extracts and analyzes the article content using NLP models.
                 </p>
               </div>
 
               <div className="border-l-4 border-primary pl-4">
-                <h3 className="font-medium text-slate-800 dark:text-slate-200">3. Sentiment Analysis</h3>
+                <h3 className="font-medium text-slate-800 dark:text-slate-200">3. Visualization</h3>
                 <p className="text-slate-600 dark:text-slate-300 text-sm">
-                  Our AI model analyzes the text at both the sentence and document level, identifying emotional tones
-                  and biases.
+                  Results are displayed through an interactive sentiment meter and breakdown chart.
                 </p>
               </div>
 
               <div className="border-l-4 border-primary pl-4">
-                <h3 className="font-medium text-slate-800 dark:text-slate-200">4. Summary Generation</h3>
+                <h3 className="font-medium text-slate-800 dark:text-slate-200">4. History Tracking</h3>
                 <p className="text-slate-600 dark:text-slate-300 text-sm">
-                  The system generates a concise summary of the article, highlighting key points and their associated
-                  sentiments.
-                </p>
-              </div>
-
-              <div className="border-l-4 border-primary pl-4">
-                <h3 className="font-medium text-slate-800 dark:text-slate-200">5. Visualization</h3>
-                <p className="text-slate-600 dark:text-slate-300 text-sm">
-                  Results are presented through intuitive visualizations that make it easy to understand the emotional
-                  tone of the article.
+                  Analysis results are stored in MongoDB for future reference and tracking.
                 </p>
               </div>
             </div>
           </Card>
 
           <Card className="p-6">
-            <h2 className="text-2xl font-semibold mb-4 text-slate-800 dark:text-slate-100">Future Development</h2>
+            <h2 className="text-2xl font-semibold mb-4 text-slate-800 dark:text-slate-100">Upcoming Features</h2>
             <p className="text-slate-600 dark:text-slate-300 mb-4">
-              We're constantly working to improve our sentiment analysis technology. Here's what's on our roadmap:
+              We have several exciting features planned for future updates:
             </p>
             <ul className="space-y-2 text-slate-600 dark:text-slate-300">
               <li className="flex items-start">
                 <span className="inline-flex items-center justify-center h-6 w-6 rounded-full bg-primary/10 text-primary text-xs font-medium mr-3 mt-0.5">
                   1
                 </span>
-                <span>Multi-language support for global news analysis</span>
+                <span>Power BI integration for advanced analytics and trends</span>
               </li>
               <li className="flex items-start">
                 <span className="inline-flex items-center justify-center h-6 w-6 rounded-full bg-primary/10 text-primary text-xs font-medium mr-3 mt-0.5">
                   2
                 </span>
-                <span>Historical sentiment tracking for topics and publications over time</span>
+                <span>Enhanced visualization with more detailed breakdowns</span>
               </li>
               <li className="flex items-start">
                 <span className="inline-flex items-center justify-center h-6 w-6 rounded-full bg-primary/10 text-primary text-xs font-medium mr-3 mt-0.5">
                   3
                 </span>
-                <span>Browser extension for instant analysis while browsing news sites</span>
+                <span>User authentication and personalized history</span>
               </li>
               <li className="flex items-start">
                 <span className="inline-flex items-center justify-center h-6 w-6 rounded-full bg-primary/10 text-primary text-xs font-medium mr-3 mt-0.5">
                   4
                 </span>
-                <span>API access for developers and researchers</span>
+                <span>Batch analysis of multiple articles</span>
               </li>
               <li className="flex items-start">
                 <span className="inline-flex items-center justify-center h-6 w-6 rounded-full bg-primary/10 text-primary text-xs font-medium mr-3 mt-0.5">
                   5
                 </span>
-                <span>Enhanced bias detection with political spectrum positioning</span>
+                <span>API endpoints for third-party integration</span>
               </li>
             </ul>
           </Card>

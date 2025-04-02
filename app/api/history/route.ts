@@ -1,7 +1,7 @@
 import { NextResponse } from "next/server"
 
-// Define the backend URL - you should store this in an environment variable
-const BACKEND_URL = "http://localhost:8000" // Update this to your FastAPI server URL
+// Get backend URL from environment variable with fallback
+const BACKEND_URL = process.env.NEXT_PUBLIC_BACKEND_URL || "http://localhost:8000"
 
 export async function GET() {
   try {

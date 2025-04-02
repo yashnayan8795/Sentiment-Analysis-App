@@ -1,6 +1,6 @@
 "use client"
 
-import { useState } from "react"
+import { useState, useEffect } from "react"
 import Link from "next/link"
 import { usePathname } from "next/navigation"
 import { Button } from "@/components/ui/button"
@@ -11,9 +11,29 @@ export default function NavBar() {
   const { theme, setTheme } = useTheme()
   const pathname = usePathname()
   const [isMenuOpen, setIsMenuOpen] = useState(false)
+  const [mounted, setMounted] = useState(false)
+
+  useEffect(() => {
+    setMounted(true)
+  }, [])
 
   const toggleMenu = () => setIsMenuOpen(!isMenuOpen)
   const closeMenu = () => setIsMenuOpen(false)
+
+  const renderThemeToggle = () => {
+    if (!mounted) return null;
+
+    return (
+      <Button
+        variant="ghost"
+        size="icon"
+        onClick={() => setTheme(theme === "dark" ? "light" : "dark")}
+        aria-label="Toggle theme"
+      >
+        {theme === "dark" ? <SunIcon className="h-5 w-5" /> : <MoonIcon className="h-5 w-5" />}
+      </Button>
+    )
+  }
 
   const navItems = [
     { name: "Home", path: "/" },
@@ -43,27 +63,12 @@ export default function NavBar() {
                 {item.name}
               </Link>
             ))}
-            <Button
-              variant="ghost"
-              size="icon"
-              onClick={() => setTheme(theme === "dark" ? "light" : "dark")}
-              aria-label="Toggle theme"
-            >
-              {theme === "dark" ? <SunIcon className="h-5 w-5" /> : <MoonIcon className="h-5 w-5" />}
-            </Button>
+            {renderThemeToggle()}
           </div>
 
           {/* Mobile Menu Button */}
           <div className="flex items-center md:hidden">
-            <Button
-              variant="ghost"
-              size="icon"
-              onClick={() => setTheme(theme === "dark" ? "light" : "dark")}
-              aria-label="Toggle theme"
-              className="mr-2"
-            >
-              {theme === "dark" ? <SunIcon className="h-5 w-5" /> : <MoonIcon className="h-5 w-5" />}
-            </Button>
+            {renderThemeToggle()}
             <Button variant="ghost" size="icon" onClick={toggleMenu} aria-label="Menu">
               {isMenuOpen ? <X className="h-5 w-5" /> : <Menu className="h-5 w-5" />}
             </Button>

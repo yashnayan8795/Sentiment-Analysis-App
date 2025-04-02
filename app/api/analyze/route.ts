@@ -3,7 +3,7 @@ import { headers } from 'next/headers'
 import { rateLimit } from '@/lib/rate-limit'
 
 // Define the backend URL - you should store this in an environment variable
-const BACKEND_URL = process.env.NEXT_PUBLIC_BACKEND_URL
+const BACKEND_URL = process.env.NEXT_PUBLIC_BACKEND_URL || "http://localhost:8000"
 
 export async function POST(request: Request) {
   try {

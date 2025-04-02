@@ -1,53 +1,46 @@
-import { Card } from "@/components/ui/card"
+import { Card } from "@/components/ui/card";
 
 export default function AboutPage() {
   return (
     <main className="min-h-screen bg-gradient-to-b from-slate-50 to-slate-100 dark:from-slate-950 dark:to-slate-900">
-      <div className="container mx-auto px-4 py-8 max-w-4xl">
-        <h1 className="text-4xl font-bold text-center mb-8 text-slate-800 dark:text-slate-100">About Us</h1>
+      <div className="container mx-auto px-6 py-12 max-w-4xl">
+        <h1 className="text-4xl font-bold text-center mb-10 text-slate-800 dark:text-slate-100">
+          About Us
+        </h1>
 
-        <Card className="p-8 mb-8">
-          <h2 className="text-2xl font-semibold mb-4 text-slate-800 dark:text-slate-100">Our Mission</h2>
-          <p className="text-slate-600 dark:text-slate-300 mb-6">
-            SentiNews is dedicated to providing objective analysis of news articles through advanced AI sentiment
-            analysis. Our mission is to help readers understand the emotional tone and bias in news content, promoting
-            media literacy and critical thinking in an era of information overload.
+        <Card className="p-8 mb-8 shadow-lg rounded-xl">
+          <h2 className="text-2xl font-semibold mb-4 text-slate-800 dark:text-slate-100">
+            Our Mission
+          </h2>
+          <p className="text-slate-600 dark:text-slate-300 leading-relaxed mb-6">
+            At SentiNews, our mission is to empower readers with AI-driven sentiment analysis of news articles. We aim to enhance media literacy by providing insights into the emotional tone and biases within news content, helping users navigate the modern information landscape with clarity and critical thinking.
           </p>
 
-          <h2 className="text-2xl font-semibold mb-4 text-slate-800 dark:text-slate-100">The Team</h2>
-          <div className="grid grid-cols-1 md:grid-cols-3 gap-6 mb-6">
+          <h2 className="text-2xl font-semibold mb-4 text-slate-800 dark:text-slate-100">
+            Meet the Team
+          </h2>
+          <div className="grid grid-cols-1 md:grid-cols-2 gap-6 mb-6">
             {[
-              {
-                name: "Yash Nayan",
-                role: "22BDS0274",
-                
-              },
-              {
-                name: "Sai Siddhartha",
-                role: "22BDS0260",
-                
-              },
-              
+              { name: "Yash Nayan", role: "22BDS0274" },
+              { name: "Sai Siddhartha", role: "22BDS0260" },
             ].map((member, index) => (
-              <div key={index} className="border rounded-lg p-4 shadow-sm">
-                <h3 className="font-medium text-lg mb-1 text-slate-800 dark:text-slate-100">{member.name}</h3>
+              <div key={index} className="border rounded-lg p-5 shadow-md bg-white dark:bg-slate-800">
+                <h3 className="font-medium text-lg mb-1 text-slate-800 dark:text-slate-100">
+                  {member.name}
+                </h3>
                 <p className="text-primary text-sm mb-2">{member.role}</p>
-                <p className="text-slate-600 dark:text-slate-400 text-sm">{member.bio}</p>
               </div>
             ))}
           </div>
 
-          <h2 className="text-2xl font-semibold mb-4 text-slate-800 dark:text-slate-100">Our Story</h2>
-          <p className="text-slate-600 dark:text-slate-300">
-            SentiNews began as a research project at a leading university, exploring how AI could be used to detect
-            emotional bias in news reporting. What started as an academic pursuit quickly evolved into a practical tool
-            that could help everyday readers navigate the complex media landscape. Today, we're committed to
-            continuously improving our sentiment analysis technology and making it accessible to everyone who wants to
-            better understand the news they consume.
+          <h2 className="text-2xl font-semibold mb-4 text-slate-800 dark:text-slate-100">
+            Our Story
+          </h2>
+          <p className="text-slate-600 dark:text-slate-300 leading-relaxed">
+            SentiNews started as an academic research project aimed at exploring how AI can detect sentiment and bias in news reporting. What began as a university initiative soon grew into a powerful tool for media analysis. Today, we continue to refine our AI technology, striving to make sentiment analysis more accessible and valuable for all news consumers.
           </p>
         </Card>
       </div>
     </main>
-  )
+  );
 }
-
