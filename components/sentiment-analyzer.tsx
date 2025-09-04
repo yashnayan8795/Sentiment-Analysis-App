@@ -20,31 +20,42 @@ interface SentimentResponse {
   meta_description: string
   summary_with_sentiment: string
   overall_sentiment: "positive" | "neutral" | "negative"
+  score?: number // Add score field
 }
 
 // Update the calculateSentimentValues function to use the sentiment score if available
 const calculateSentimentValues = (sentiment: "positive" | "neutral" | "negative", summary: string, score?: number) => {
-  // If we have a direct score from the API (0-1 range), use it
-  if (score !== undefined) {
-    // Convert score to our 0-100 scale
-    const mainValue = sentiment === "positive" ? 50 + score * 50 : sentiment === "negative" ? 50 - score * 50 : 50
-
-    // Create breakdown based on the sentiment and score
+  // If we have a direct score from the API (0-1 range), use it for proper calculations
+  if (score !== undefined && score >= 0 && score <= 1) {
+    // Convert score to percentage and adjust based on sentiment
+    const confidence = Math.round(score * 100)
+    
+    let mainValue = 50 // Default neutral position
     let breakdown = { positive: 33, neutral: 34, negative: 33 } // Default balanced
 
     if (sentiment === "positive") {
-      const positiveValue = Math.round(score * 100)
+      // For positive sentiment: 50 + (confidence * 0.5) gives range 50-100
+      mainValue = Math.round(50 + (confidence * 0.5))
       breakdown = {
-        positive: positiveValue,
-        neutral: Math.round((100 - positiveValue) / 2),
-        negative: Math.round((100 - positiveValue) / 2),
+        positive: Math.max(confidence, 40), // Ensure minimum visibility
+        neutral: Math.round((100 - confidence) * 0.6),
+        negative: Math.round((100 - confidence) * 0.4),
       }
     } else if (sentiment === "negative") {
-      const negativeValue = Math.round(score * 100)
+      // For negative sentiment: 50 - (confidence * 0.5) gives range 0-50
+      mainValue = Math.round(50 - (confidence * 0.5))
       breakdown = {
-        negative: negativeValue,
-        neutral: Math.round((100 - negativeValue) / 2),
-        positive: Math.round((100 - negativeValue) / 2),
+        negative: Math.max(confidence, 40), // Ensure minimum visibility
+        neutral: Math.round((100 - confidence) * 0.6),
+        positive: Math.round((100 - confidence) * 0.4),
+      }
+    } else {
+      // Neutral sentiment
+      mainValue = 50
+      breakdown = {
+        neutral: Math.max(60, 100 - confidence), // High neutral
+        positive: Math.round(confidence * 0.5),
+        negative: Math.round(confidence * 0.5),
       }
     }
 
@@ -54,21 +65,18 @@ const calculateSentimentValues = (sentiment: "positive" | "neutral" | "negative"
     }
   }
 
-  // Fallback to the original calculation if no score is provided
-  // Count sentiment mentions in summary
+  // Fallback calculation when no score is available
   const positiveCount = (summary.match(/\[Sentiment: Positive\]/g) || []).length
   const negativeCount = (summary.match(/\[Sentiment: Negative\]/g) || []).length
   const neutralCount = (summary.match(/\[Sentiment: Neutral\]/g) || []).length
 
-  const total = positiveCount + negativeCount + neutralCount || 1 // Avoid division by zero
+  const total = positiveCount + negativeCount + neutralCount || 1
 
-  // Calculate percentages
   const positive = Math.round((positiveCount / total) * 100)
   const negative = Math.round((negativeCount / total) * 100)
   const neutral = Math.round((neutralCount / total) * 100)
 
-  // Calculate main sentiment value (0-100)
-  let mainValue = 50 // Default neutral
+  let mainValue = 50
   if (sentiment === "positive") {
     mainValue = 75 + Math.round(positive / 4)
   } else if (sentiment === "negative") {
@@ -77,11 +85,7 @@ const calculateSentimentValues = (sentiment: "positive" | "neutral" | "negative"
 
   return {
     mainValue: Math.min(100, Math.max(0, mainValue)),
-    breakdown: {
-      positive,
-      neutral,
-      negative,
-    },
+    breakdown: { positive, neutral, negative },
   }
 }
 
@@ -131,19 +135,21 @@ export default function SentimentAnalyzer() {
       const data = await response.json()
       setResults(data)
 
-      // Get the score from the raw response if available
-      let score
-      try {
-        const rawResponse = await fetch(`${window.location.origin}/api/raw-sentiment?url=${encodeURIComponent(url)}`)
-        if (rawResponse.ok) {
-          const rawData = await rawResponse.json()
-          score = rawData.score
+      // Use the score from the main response first, fallback to raw API
+      let score = data.score
+      if (!score) {
+        try {
+          const rawResponse = await fetch(`${window.location.origin}/api/raw-sentiment?url=${encodeURIComponent(url)}`)
+          if (rawResponse.ok) {
+            const rawData = await rawResponse.json()
+            score = rawData.score
+          }
+        } catch (e) {
+          console.error("Could not fetch raw sentiment data:", e)
         }
-      } catch (e) {
-        console.error("Could not fetch raw sentiment data:", e)
       }
 
-      // Calculate sentiment values for charts, passing the score if available
+      // Calculate sentiment values for charts, using the available score
       const values = calculateSentimentValues(data.overall_sentiment, data.summary_with_sentiment, score)
       setSentimentValues(values)
 

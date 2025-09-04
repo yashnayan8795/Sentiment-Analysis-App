@@ -24,10 +24,10 @@ export async function GET() {
     const transformedArticles = data.articles.map((article: any) => ({
       id: article.url, // Using URL as ID since MongoDB _id is excluded
       url: article.url,
-      title: article.heading,
-      sentiment: article.sentiment.toLowerCase(),
+      title: article.heading || article.title || "Untitled",
+      sentiment: (article.sentiment || "neutral").toLowerCase(),
       timestamp: article.timestamp || new Date().toISOString(), // Use timestamp if available or current time
-      score: article.score,
+      score: article.score || 0,
     }))
 
     return NextResponse.json({ articles: transformedArticles })

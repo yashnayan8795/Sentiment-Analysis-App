@@ -1,5 +1,15 @@
 import { NextResponse } from "next/server"
 
+// Placeholder function for PowerBI token generation
+async function getPowerBIToken(): Promise<string> {
+  // This would typically involve:
+  // 1. Azure AD authentication
+  // 2. Getting an access token
+  // 3. Requesting PowerBI embed token
+  // For now, return a placeholder
+  throw new Error("PowerBI authentication not configured. Please set up Azure AD and PowerBI workspace.")
+}
+
 export async function GET() {
   try {
     // You'll need to implement Azure AD authentication here

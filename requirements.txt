@@ -1,0 +1,19 @@
+# FastAPI and Web Framework
+fastapi
+uvicorn[standard]
+
+# Database
+pymongo
+
+# HTTP and Web Scraping
+aiohttp
+async-timeout
+beautifulsoup4
+certifi
+
+# Machine Learning and AI
+transformers
+torch
+
+# Utilities
+python-dotenv

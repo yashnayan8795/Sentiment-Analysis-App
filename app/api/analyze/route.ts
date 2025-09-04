@@ -59,7 +59,7 @@ export async function POST(request: Request) {
     // Transform the data to match our frontend's expected format
     const transformedData = {
       heading: data.heading,
-      meta_description: data.summary,
+      meta_description: data.summary || "", // Use summary as meta_description
       // Create a summary with sentiment format that our frontend expects
       summary_with_sentiment: `${data.summary} [Sentiment: ${data.sentiment}]`,
       // Map the sentiment label to our expected format (lowercase)
@@ -69,6 +69,8 @@ export async function POST(request: Request) {
           : data.sentiment.toLowerCase() === "negative"
             ? "negative"
             : "neutral",
+      // Include the score for chart calculations
+      score: data.score || 0.5,
     }
 
     return NextResponse.json(transformedData)
