@@ -1,4 +1,6 @@
-# Sentiment Analysis App
+# 📰 SentiNews - Intelligent News Sentiment Analyzer
+
+*Transform any news article into actionable sentiment insights with the power of AI*
 
 [![Next.js](https://img.shields.io/badge/Next.js-15.2.4-black)](https://nextjs.org/)
 [![React](https://img.shields.io/badge/React-19-blue)](https://reactjs.org/)
@@ -107,8 +109,8 @@ lib/
 
 ### 1. Clone the Repository
 ```bash
-git clone https://github.com/yourusername/sentiment-analysis-app.git
-cd sentiment-analysis-app
+git clone https://github.com/yourusername/newsscope-ai.git
+cd newsscope-ai
 ```
 
 ### 2. Install Dependencies
