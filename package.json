@@ -1,12 +1,36 @@
 {
-  "name": "my-v0-project",
-  "version": "0.1.0",
+  "name": "sentiment-analysis-app",
+  "version": "1.0.0",
+  "description": "AI-powered sentiment analysis application for news articles with real-time visualization",
+  "author": "Your Name",
+  "license": "MIT",
+  "repository": {
+    "type": "git",
+    "url": "https://github.com/yourusername/sentiment-analysis-app.git"
+  },
+  "keywords": [
+    "sentiment-analysis",
+    "ai",
+    "nlp",
+    "news",
+    "react",
+    "nextjs",
+    "fastapi",
+    "mongodb"
+  ],
   "private": true,
   "scripts": {
     "dev": "next dev",
     "build": "next build",
     "start": "next start",
-    "lint": "next lint"
+    "lint": "next lint",
+    "test": "jest",
+    "test:watch": "jest --watch",
+    "test:coverage": "jest --coverage",
+    "backend": "python backend/run_stable.py",
+    "dev:full": "concurrently \"npm run backend\" \"npm run dev\"",
+    "clean": "rm -rf .next out node_modules/.cache",
+    "type-check": "tsc --noEmit"
   },
   "dependencies": {
     "@hookform/resolvers": "^3.9.1",
