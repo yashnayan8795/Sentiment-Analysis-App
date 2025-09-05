@@ -1,7 +1,7 @@
 import { NextResponse } from "next/server"
 
 // Placeholder function for PowerBI token generation
-async function getPowerBIToken(): Promise<string> {
+async function getPowerBIToken() {
   // This would typically involve:
   // 1. Azure AD authentication
   // 2. Getting an access token
@@ -24,4 +24,4 @@ export async function GET() {
       { status: 500 }
     )
   }
-} 
+}

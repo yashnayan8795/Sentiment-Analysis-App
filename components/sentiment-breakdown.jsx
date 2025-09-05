@@ -4,14 +4,8 @@ import { useEffect, useRef } from "react"
 import { Card } from "@/components/ui/card"
 import { motion } from "framer-motion"
 
-interface SentimentBreakdownProps {
-  positive: number // 0-100
-  neutral: number // 0-100
-  negative: number // 0-100
-}
-
-export default function SentimentBreakdown({ positive, neutral, negative }: SentimentBreakdownProps) {
-  const canvasRef = useRef<HTMLCanvasElement>(null)
+export default function SentimentBreakdown({ positive, neutral, negative }) {
+  const canvasRef = useRef(null)
 
   useEffect(() => {
     const canvas = canvasRef.current
@@ -33,7 +27,7 @@ export default function SentimentBreakdown({ positive, neutral, negative }: Sent
     ctx.clearRect(0, 0, width, height)
 
     // Draw bars with animation
-    const drawBar = (y: number, value: number, color: string, label: string) => {
+    const drawBar = (y, value, color, label) => {
       // Background bar with gradient
       const bgGradient = ctx.createLinearGradient(100, y, width - 120, y)
       bgGradient.addColorStop(0, "#f3f4f6")
@@ -99,4 +93,3 @@ export default function SentimentBreakdown({ positive, neutral, negative }: Sent
     </Card>
   )
 }
-

@@ -45,7 +45,7 @@ export default function ProjectDetailsPage() {
                       Frontend
                     </td>
                     <td className="px-6 py-4 whitespace-nowrap text-sm text-slate-700 dark:text-slate-300">
-                      Next.js, TypeScript, Tailwind CSS
+                      Next.js, JavaScript, Tailwind CSS
                     </td>
                   </tr>
                   <tr>
@@ -145,4 +145,3 @@ export default function ProjectDetailsPage() {
     </main>
   )
 }
-

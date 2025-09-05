@@ -3,7 +3,7 @@ import { NextResponse } from "next/server"
 // Define the backend URL - you should store this in an environment variable
 const BACKEND_URL = process.env.NEXT_PUBLIC_BACKEND_URL || "http://localhost:8000"
 
-export async function GET(request: Request) {
+export async function GET(request) {
   try {
     const { searchParams } = new URL(request.url)
     const url = searchParams.get("url")
@@ -37,4 +37,3 @@ export async function GET(request: Request) {
     return NextResponse.json({ message: "Internal server error" }, { status: 500 })
   }
 }
-

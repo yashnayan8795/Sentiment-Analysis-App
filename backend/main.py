@@ -145,85 +145,246 @@ class URLInput(BaseModel):
     url: str
 
 async def fetch_content(url: str) -> Optional[str]:
-    """Fetch HTML content from URL with simple and reliable approach"""
-    # Multiple fallback approaches
+    """Fetch HTML content from URL with enhanced reliability and error handling"""
+    
+    # Enhanced headers with better compatibility
+    headers = {
+        "User-Agent": "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/120.0.0.0 Safari/537.36",
+        "Accept": "text/html,application/xhtml+xml,application/xml;q=0.9,image/webp,*/*;q=0.8",
+        "Accept-Language": "en-US,en;q=0.5",
+        "Accept-Encoding": "gzip, deflate",
+        "Connection": "keep-alive",
+        "Upgrade-Insecure-Requests": "1",
+    }
+    
+    # Multiple fallback approaches with improved error handling
     approaches = [
-        # Approach 1: Simple request
-        {"ssl": False, "timeout": 10},
-        # Approach 2: With SSL disabled
-        {"ssl": True, "timeout": 15},
+        # Approach 1: Standard HTTPS with SSL verification
+        {"ssl": True, "timeout": 15, "verify_ssl": True},
+        # Approach 2: HTTPS with relaxed SSL
+        {"ssl": True, "timeout": 20, "verify_ssl": False},
+        # Approach 3: Force HTTP if available
+        {"ssl": False, "timeout": 15, "force_http": True},
     ]
     
     for i, approach in enumerate(approaches):
         try:
             connector = None
+            current_url = url
+            
+            # Handle SSL configuration
             if approach["ssl"]:
                 import ssl
-                ssl_context = ssl.create_default_context()
-                ssl_context.check_hostname = False
-                ssl_context.verify_mode = ssl.CERT_NONE
-                connector = aiohttp.TCPConnector(ssl=ssl_context)
+                if approach.get("verify_ssl", True):
+                    connector = aiohttp.TCPConnector(ssl=True)
+                else:
+                    ssl_context = ssl.create_default_context()
+                    ssl_context.check_hostname = False
+                    ssl_context.verify_mode = ssl.CERT_NONE
+                    connector = aiohttp.TCPConnector(ssl=ssl_context)
             else:
                 connector = aiohttp.TCPConnector(ssl=False)
+                # Try HTTP version if force_http is enabled
+                if approach.get("force_http") and url.startswith("https://"):
+                    current_url = url.replace("https://", "http://", 1)
             
-            async with aiohttp.ClientSession(connector=connector) as session:
-                async with async_timeout.timeout(approach["timeout"]):
-                    async with session.get(
-                        url,
-                        headers=HEADERS,
-                        allow_redirects=True
-                    ) as response:
-                        # Check status
-                        if response.status == 200:
-                            content = await response.text()
-                            if len(content) > 100:  # Basic validation
-                                logging.info(f"Successfully fetched URL {url} with approach {i+1}")
-                                return content
+            logging.info(f"Attempting approach {i+1} for URL: {current_url}")
+            
+            async with aiohttp.ClientSession(
+                connector=connector,
+                timeout=aiohttp.ClientTimeout(total=approach["timeout"])
+            ) as session:
+                async with session.get(
+                    current_url,
+                    headers=headers,
+                    allow_redirects=True,
+                    max_redirects=10
+                ) as response:
+                    # Log response details
+                    logging.info(f"Approach {i+1}: Status {response.status}, Content-Type: {response.headers.get('content-type', 'unknown')}")
+                    
+                    # Accept various successful status codes
+                    if response.status in [200, 201, 202]:
+                        content = await response.text()
                         
-                        logging.warning(f"Approach {i+1} failed with status {response.status} for URL {url}")
+                        # Enhanced content validation
+                        if len(content) > 500 and any(tag in content.lower() for tag in ['<html', '<body', '<article', '<div']):
+                            logging.info(f"✅ Successfully fetched URL {current_url} with approach {i+1} (Content length: {len(content)} chars)")
+                            return content
+                        else:
+                            logging.warning(f"Approach {i+1}: Content too short or invalid HTML structure (length: {len(content)})")
+                    
+                    # Handle redirects and other status codes
+                    elif response.status in [301, 302, 303, 307, 308]:
+                        redirect_url = response.headers.get('location', '')
+                        logging.info(f"Approach {i+1}: Redirect to {redirect_url}")
+                    elif response.status == 403:
+                        logging.warning(f"Approach {i+1}: Access forbidden (403) - website may block automated requests")
+                    elif response.status == 503:
+                        logging.warning(f"Approach {i+1}: Service unavailable (503) - website may be blocking bots")
+                    else:
+                        logging.warning(f"Approach {i+1}: Unexpected status {response.status}")
                         
+        except asyncio.TimeoutError:
+            logging.warning(f"Approach {i+1}: Timeout after {approach['timeout']} seconds for URL {current_url}")
+        except aiohttp.ClientSSLError as e:
+            logging.warning(f"Approach {i+1}: SSL error for URL {current_url}: {e}")
+        except aiohttp.ClientError as e:
+            logging.warning(f"Approach {i+1}: Client error for URL {current_url}: {e}")
         except Exception as e:
-            logging.warning(f"Approach {i+1} failed for URL {url}: {e}")
-            continue
+            logging.warning(f"Approach {i+1}: Unexpected error for URL {current_url}: {type(e).__name__}: {e}")
     
-    # If all approaches failed
-    logging.error(f"All approaches failed for URL {url}")
+    # If all approaches failed, provide detailed error information
+    logging.error(f"❌ All {len(approaches)} approaches failed for URL {url}")
     return None
 
 def scrape_content(html: str) -> tuple[str, str]:
-    """Extract heading and body content from HTML"""
+    """Extract heading and body content from HTML with enhanced parsing"""
     soup = BeautifulSoup(html, "html.parser")
     
-    # Safe heading extraction
-    h1_tag = soup.find("h1")
-    heading = h1_tag.get_text(strip=True) if h1_tag else "No Heading"
+    # Remove unwanted elements that might interfere with content extraction
+    for element in soup(["script", "style", "nav", "header", "footer", "aside", "iframe"]):
+        element.decompose()
     
-    # Extract paragraphs
-    paragraphs = soup.find_all("p")
-    body = " ".join([p.get_text(strip=True) for p in paragraphs])
+    # Enhanced heading extraction - try multiple strategies
+    heading = "No Heading"
+    
+    # Strategy 1: Look for h1 tag
+    h1_tag = soup.find("h1")
+    if h1_tag and h1_tag.get_text(strip=True):
+        heading = h1_tag.get_text(strip=True)
+    else:
+        # Strategy 2: Look for title tag
+        title_tag = soup.find("title")
+        if title_tag and title_tag.get_text(strip=True):
+            heading = title_tag.get_text(strip=True)
+        else:
+            # Strategy 3: Look for article title or other heading tags
+            for selector in ["h2", "h3", ".title", ".headline", "[data-testid='headline']"]:
+                element = soup.select_one(selector)
+                if element and element.get_text(strip=True):
+                    heading = element.get_text(strip=True)
+                    break
+    
+    # Enhanced body content extraction
+    body_parts = []
+    
+    # Strategy 1: Look for article content specifically
+    article_selectors = [
+        "article", 
+        "[role='main']", 
+        ".article-content", 
+        ".content", 
+        ".story-body", 
+        ".entry-content",
+        ".post-content",
+        "#article-body",
+        ".article-body"
+    ]
+    
+    article_found = False
+    for selector in article_selectors:
+        articles = soup.select(selector)
+        for article in articles:
+            paragraphs = article.find_all("p")
+            if len(paragraphs) >= 2:  # Ensure substantial content
+                body_parts.extend([p.get_text(strip=True) for p in paragraphs if p.get_text(strip=True)])
+                article_found = True
+                break
+        if article_found:
+            break
+    
+    # Strategy 2: If no article content found, fall back to all paragraphs
+    if not body_parts:
+        paragraphs = soup.find_all("p")
+        body_parts = [p.get_text(strip=True) for p in paragraphs if p.get_text(strip=True) and len(p.get_text(strip=True)) > 20]
+    
+    # Strategy 3: If still no content, try div elements with substantial text
+    if not body_parts:
+        divs = soup.find_all("div")
+        for div in divs:
+            text = div.get_text(strip=True)
+            if len(text) > 100 and len(text.split()) > 10:  # Substantial text content
+                body_parts.append(text)
+    
+    # Join all body parts and clean up
+    body = " ".join(body_parts)
+    
+    # Clean up the text
+    import re
+    body = re.sub(r'\s+', ' ', body)  # Normalize whitespace
+    body = re.sub(r'[^\w\s\.,;:!?\-\'"()]', '', body)  # Remove special characters but keep punctuation
+    
+    # Limit heading length
+    if len(heading) > 200:
+        heading = heading[:200] + "..."
+    
+    logging.info(f"📋 Content extraction summary: Heading length: {len(heading)}, Body length: {len(body)} chars, Paragraphs found: {len(body_parts)}")
     
     return heading, body
 
 @app.post("/analyze/")
 async def analyze_article(data: URLInput):
-    """Analyze sentiment of a news article from URL"""
-    logging.info(f"Starting analysis for URL: {data.url}")
+    """Analyze sentiment of a news article from URL with enhanced error handling"""
+    logging.info(f"🔍 Starting analysis for URL: {data.url}")
+    
+    # Validate URL format first
+    try:
+        from urllib.parse import urlparse
+        parsed = urlparse(data.url)
+        if not parsed.scheme or not parsed.netloc:
+            raise HTTPException(
+                status_code=400,
+                detail="Invalid URL format. Please provide a complete URL with http:// or https://"
+            )
+    except Exception as e:
+        raise HTTPException(
+            status_code=400,
+            detail=f"URL validation failed: {str(e)}"
+        )
     
     html = await fetch_content(data.url)
     if not html:
-        raise HTTPException(
-            status_code=400, 
-            detail=f"Unable to access the website at {data.url}. This could be due to: (1) The website blocking automated requests, (2) Network connectivity issues, (3) Invalid URL. Try a different news article URL or a simpler website like a blog post."
-        )
+        # Provide more specific error messages based on common scenarios
+        domain = data.url.split('/')[2] if '/' in data.url else data.url
+        
+        error_message = f"Unable to access the website at {data.url}. "
+        
+        if 'cnn.com' in domain or 'bbc.com' in domain or 'ndtv.com' in domain:
+            error_message += "This news website appears to block automated requests. "
+        
+        error_message += "This could be due to:\n"
+        error_message += "• The website blocking automated requests (common with major news sites)\n"
+        error_message += "• Network connectivity issues\n"
+        error_message += "• Invalid or broken URL\n"
+        error_message += "• Website temporarily unavailable\n\n"
+        error_message += "💡 Try:\n"
+        error_message += "• A different news article from a smaller news site\n"
+        error_message += "• A blog post or article from a less restrictive website\n"
+        error_message += "• Check if the URL is correct and accessible in your browser"
+        
+        raise HTTPException(status_code=400, detail=error_message)
 
     heading, body = scrape_content(html)
-    logging.info(f"Extracted content - Heading: '{heading[:50]}...', Body length: {len(body)} chars")
+    logging.info(f"📄 Extracted content - Heading: '{heading[:50]}...', Body length: {len(body)} chars")
     
-    # Ensure we have content to analyze
+    # Enhanced content validation
     if not body.strip():
         raise HTTPException(
             status_code=400, 
-            detail="No readable content found in the article. Please try a different URL with more text content."
+            detail="No readable text content found in the article. This might be due to:\n" +
+                   "• The page being mostly images or videos\n" +
+                   "• JavaScript-rendered content that requires a browser\n" +
+                   "• Paywall or subscription-protected content\n\n" +
+                   "Please try a different article URL with more accessible text content."
+        )
+    
+    # Check for minimum content requirements
+    if len(body.strip()) < 50:
+        raise HTTPException(
+            status_code=400,
+            detail=f"Article content too short ({len(body.strip())} characters). " +
+                   "Please try a URL with a longer article for better analysis."
         )
     
     # Use more content for better analysis
@@ -273,8 +434,19 @@ async def analyze_article(data: URLInput):
             sentiment_score = 0.0
         
     except Exception as e:
-        logging.error(f"AI model processing error: {e}")
-        raise HTTPException(status_code=500, detail="Error processing article with AI models")
+        logging.error(f"🤖 AI model processing error: {e}")
+        error_detail = "Error processing article with AI models. "
+        
+        if "CUDA" in str(e) or "GPU" in str(e):
+            error_detail += "GPU/CUDA issue detected - using CPU fallback."
+        elif "memory" in str(e).lower():
+            error_detail += "Memory issue - try a shorter article."
+        elif "timeout" in str(e).lower():
+            error_detail += "Processing timeout - the article might be too long."
+        else:
+            error_detail += f"Technical error: {str(e)[:100]}..."
+            
+        raise HTTPException(status_code=500, detail=error_detail)
 
     result = {
         "url": data.url,

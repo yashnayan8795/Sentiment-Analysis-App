@@ -1,7 +1,5 @@
 "use client"
 
-import type React from "react"
-
 import { useState } from "react"
 import { useToast } from "@/components/ui/use-toast"
 import { Button } from "@/components/ui/button"
@@ -15,16 +13,9 @@ import RecentAnalyses from "./recent-analyses"
 import { v4 as uuidv4 } from "uuid"
 
 // Update the SentimentResponse interface to match the transformed data from our API
-interface SentimentResponse {
-  heading: string
-  meta_description: string
-  summary_with_sentiment: string
-  overall_sentiment: "positive" | "neutral" | "negative"
-  score?: number // Add score field
-}
 
 // Update the calculateSentimentValues function to use the sentiment score if available
-const calculateSentimentValues = (sentiment: "positive" | "neutral" | "negative", summary: string, score?: number) => {
+const calculateSentimentValues = (sentiment, summary, score) => {
   // If we have a direct score from the API (0-1 range), use it for proper calculations
   if (score !== undefined && score >= 0 && score <= 1) {
     // Convert score to percentage and adjust based on sentiment
@@ -92,8 +83,8 @@ const calculateSentimentValues = (sentiment: "positive" | "neutral" | "negative"
 export default function SentimentAnalyzer() {
   const [url, setUrl] = useState("")
   const [isLoading, setIsLoading] = useState(false)
-  const [error, setError] = useState<string | null>(null)
-  const [results, setResults] = useState<SentimentResponse | null>(null)
+  const [error, setError] = useState(null)
+  const [results, setResults] = useState(null)
   const [sentimentValues, setSentimentValues] = useState({
     mainValue: 50,
     breakdown: { positive: 33, neutral: 34, negative: 33 },
@@ -101,11 +92,20 @@ export default function SentimentAnalyzer() {
   const { toast } = useToast()
 
   // Update the handleSubmit function to pass the score to calculateSentimentValues
-  const handleSubmit = async (e: React.FormEvent) => {
+  const handleSubmit = async (e) => {
     e.preventDefault()
 
     // Basic URL validation
-    if (!url || !url.startsWith("http")) {
+    if (!url || !url.trim()) {
+      toast({
+        title: "URL Required",
+        description: "Please enter a news article URL to analyze",
+        variant: "destructive",
+      })
+      return
+    }
+
+    if (!url.startsWith("http")) {
       toast({
         title: "Invalid URL",
         description: "Please enter a valid URL starting with http:// or https://",
@@ -124,12 +124,19 @@ export default function SentimentAnalyzer() {
         headers: {
           "Content-Type": "application/json",
         },
-        body: JSON.stringify({ url }),
+        body: JSON.stringify({ url: url.trim() }),
       })
 
       if (!response.ok) {
         const errorData = await response.json()
-        throw new Error(errorData.message || "Failed to analyze article")
+        let errorMessage = errorData.message || "Failed to analyze article"
+        
+        // Format multi-line error messages for better display
+        if (errorMessage.includes('\n')) {
+          errorMessage = errorMessage.split('\n').join(' | ')
+        }
+        
+        throw new Error(errorMessage)
       }
 
       const data = await response.json()
@@ -153,13 +160,25 @@ export default function SentimentAnalyzer() {
       const values = calculateSentimentValues(data.overall_sentiment, data.summary_with_sentiment, score)
       setSentimentValues(values)
 
-      // No need to save to localStorage as we're now using the API history
-      // The RecentAnalyses component will fetch from the API
+      // Clear the input after successful analysis
+      setUrl("")
+      
+      // Trigger a custom event to notify other components
+      window.dispatchEvent(new CustomEvent('analysisComplete', { detail: data }))
+      
+      // Show success message
+      toast({
+        title: "Analysis Complete",
+        description: `Article sentiment: ${data.overall_sentiment}`,
+        variant: "default",
+      })
+
     } catch (err) {
-      setError(err instanceof Error ? err.message : "An unexpected error occurred")
+      const errorMessage = err instanceof Error ? err.message : "An unexpected error occurred"
+      setError(errorMessage)
       toast({
         title: "Analysis Failed",
-        description: err instanceof Error ? err.message : "An unexpected error occurred",
+        description: errorMessage,
         variant: "destructive",
       })
     } finally {
@@ -168,7 +187,7 @@ export default function SentimentAnalyzer() {
   }
 
   // Save analysis to recent history
-  const saveToRecentAnalyses = (url: string, data: SentimentResponse) => {
+  const saveToRecentAnalyses = (url, data) => {
     const newAnalysis = {
       id: uuidv4(),
       url,
@@ -233,11 +252,23 @@ export default function SentimentAnalyzer() {
 
       {error && (
         <Card className="p-6 border-red-200 bg-red-50 dark:bg-red-900/20 dark:border-red-800">
-          <div className="flex items-center text-red-700 dark:text-red-400">
-            <AlertCircle className="h-5 w-5 mr-2" />
-            <h3 className="font-medium">Error</h3>
+          <div className="flex items-start text-red-700 dark:text-red-400">
+            <AlertCircle className="h-5 w-5 mr-2 mt-0.5 flex-shrink-0" />
+            <div>
+              <h3 className="font-medium mb-2">Analysis Error</h3>
+              <div className="text-sm text-red-600 dark:text-red-300 whitespace-pre-line leading-relaxed">
+                {error.split(' | ').map((line, index) => (
+                  <div key={index} className="mb-1">
+                    {line.startsWith('•') || line.startsWith('💡') ? (
+                      <div className="ml-2">{line}</div>
+                    ) : (
+                      line
+                    )}
+                  </div>
+                ))}
+              </div>
+            </div>
           </div>
-          <p className="mt-2 text-sm text-red-600 dark:text-red-300">{error}</p>
         </Card>
       )}
 

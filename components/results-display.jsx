@@ -3,25 +3,14 @@
 import { Card } from "@/components/ui/card"
 import { TrendingUp, TrendingDown, Minus } from "lucide-react"
 
-interface SentimentResponse {
-  heading: string
-  meta_description: string
-  summary_with_sentiment: string
-  overall_sentiment: "positive" | "neutral" | "negative"
-}
-
-interface ResultsDisplayProps {
-  results: SentimentResponse
-}
-
-export default function ResultsDisplay({ results }: ResultsDisplayProps) {
+export default function ResultsDisplay({ results }) {
   const { heading, meta_description, summary_with_sentiment, overall_sentiment } = results
 
   // Split the summary by sentiment indicators
   const summaryParts = summary_with_sentiment.split(/(\[Sentiment: (?:Positive|Negative|Neutral)\])/g)
 
   // Get sentiment color and icon
-  const getSentimentColor = (sentiment: string) => {
+  const getSentimentColor = (sentiment) => {
     switch (sentiment.toLowerCase()) {
       case "positive":
         return "text-green-600 dark:text-green-400"
@@ -32,7 +21,7 @@ export default function ResultsDisplay({ results }: ResultsDisplayProps) {
     }
   }
 
-  const getSentimentIcon = (sentiment: string) => {
+  const getSentimentIcon = (sentiment) => {
     switch (sentiment.toLowerCase()) {
       case "positive":
         return <TrendingUp className="h-5 w-5" />
@@ -88,4 +77,3 @@ export default function ResultsDisplay({ results }: ResultsDisplayProps) {
     </Card>
   )
 }
-

@@ -4,16 +4,11 @@ import { useEffect, useRef } from "react"
 import { Card } from "@/components/ui/card"
 import { motion } from "framer-motion"
 
-interface SentimentMeterProps {
-  sentiment: "positive" | "neutral" | "negative"
-  value: number // 0-100
-}
-
-export default function SentimentMeter({ sentiment, value }: SentimentMeterProps) {
-  const canvasRef = useRef<HTMLCanvasElement>(null)
+export default function SentimentMeter({ sentiment, value }) {
+  const canvasRef = useRef(null)
 
   // Get color based on sentiment
-  const getColor = (sentiment: string) => {
+  const getColor = (sentiment) => {
     switch (sentiment) {
       case "positive":
         return "#10b981" // green-500
@@ -119,4 +114,3 @@ export default function SentimentMeter({ sentiment, value }: SentimentMeterProps
     </Card>
   )
 }
-
