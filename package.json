@@ -1,7 +1,7 @@
 {
-  "name": "SentiNews : sentiment-analysis-app",
-  "version": "1.0.0",
-  "description": "AI-powered sentiment analysis application for news articles with real-time visualization",
+  "name": "SentiNews : sentiment-analysis-app-mvc",
+  "version": "2.0.0",
+  "description": "AI-powered sentiment analysis application with MVC architecture for news articles with real-time visualization",
   "author": "Your Name",
   "license": "MIT",
   "repository": {
@@ -22,7 +22,10 @@
     "fastapi",
     "mongodb",
     "real-time",
-    "visualization"
+    "visualization",
+    "mvc",
+    "architecture",
+    "clean-code"
   ],
   "private": true,
   "scripts": {
@@ -33,10 +36,14 @@
     "test": "jest",
     "test:watch": "jest --watch",
     "test:coverage": "jest --coverage",
-    "backend": "python backend/run_stable.py",
+    "backend": "python backend/main_mvc.py",
+    "backend:legacy": "python backend/run_stable.py",
     "dev:full": "concurrently \"npm run backend\" \"npm run dev\"",
+    "dev:legacy": "concurrently \"npm run backend:legacy\" \"npm run dev\"",
     "clean": "rm -rf .next out node_modules/.cache",
-    "type-check": "tsc --noEmit"
+    "type-check": "tsc --noEmit",
+    "mvc:test": "node -e \"console.log('MVC Architecture Test'); import('./src/app.js')\"",
+    "mvc:build": "npm run build && echo 'MVC build completed'"
   },
   "dependencies": {
     "@hookform/resolvers": "^3.9.1",
@@ -99,6 +106,7 @@
     "jest": "^29.7.0",
     "jest-environment-jsdom": "^29.7.0",
     "postcss": "^8",
-    "tailwindcss": "^3.4.17"
+    "tailwindcss": "^3.4.17",
+    "concurrently": "^8.2.2"
   }
 }

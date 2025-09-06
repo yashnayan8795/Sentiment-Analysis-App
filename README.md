@@ -1,3 +1,13 @@
+# 📰 SentiNews - MVC Architecture Implementation
+
+*AI-powered sentiment analysis application with clean MVC architecture*
+
+[![Next.js](https://img.shields.io/badge/Next.js-15.2.4-black)](https://nextjs.org/)
+[![React](https://img.shields.io/badge/React-19-blue)](https://reactjs.org/)
+[![FastAPI](https://img.shields.io/badge/FastAPI-Latest-green)](https://fastapi.tiangolo.com/)
+[![MVC](https://img.shields.io/badge/Architecture-MVC-purple)](https://en.wikipedia.org/wiki/Model%E2%80%93view%E2%80%93controller)
+
+
 # 📰 SentiNews - Intelligent News Sentiment Analyzer
 
 *Transform any news article into actionable sentiment insights with the power of AI*
@@ -32,42 +42,6 @@ A comprehensive full-stack web application that analyzes the sentiment of news a
 - **Modular Components**: 45+ reusable UI components with Radix UI
 - **Performance Optimized**: Built-in caching and optimization strategies
 
-## 🏗️ Architecture
-
-### System Overview
-```
-┌─────────────────┐    ┌─────────────────┐    ┌─────────────────┐
-│   Frontend      │    │   Backend       │    │   External      │
-│   (Next.js)     │────│   (FastAPI)     │────│   Services      │
-│                 │    │                 │    │                 │
-│ • React 19      │    │ • AI Models     │    │ • MongoDB       │
-│ • Tailwind CSS  │    │ • Web Scraping  │    │ • Redis         │
-│ • Radix UI      │    │ • Rate Limiting │    │ • Upstash       │
-└─────────────────┘    └─────────────────┘    └─────────────────┘
-```
-
-### Component Structure
-```
-app/
-├── api/                    # Backend-for-Frontend API routes
-│   ├── analyze/            # Sentiment analysis endpoint
-│   ├── history/            # Analysis history management
-│   ├── powerbi-token/      # PowerBI integration
-│   └── raw-sentiment/      # Raw sentiment data
-├── (pages)/               # Application pages
-components/
-├── ui/                    # Reusable UI components (45+ components)
-├── sentiment-analyzer.jsx # Main analysis interface
-├── results-display.jsx    # Analysis results presentation
-├── sentiment-meter.jsx    # Circular sentiment gauge
-├── sentiment-breakdown.jsx# Sentiment distribution chart
-└── recent-analyses.jsx    # Historical analysis viewer
-lib/
-├── rate-limit.js          # Redis rate limiting with fallback
-├── db.js                  # MongoDB connection management
-└── utils.js               # Utility functions and helpers
-```
-
 ## 🚀 Technology Stack
 
 ### Frontend
@@ -97,38 +71,179 @@ lib/
 - **Build Tools**: Next.js with optimized production builds
 - **Package Manager**: pnpm for efficient dependency management
 
-## 📋 Prerequisites
 
-- **Node.js**: 16.0.0 or higher
-- **pnpm**: Latest version (recommended over npm/yarn)
-- **Python**: 3.8+ for backend services
-- **MongoDB**: Local instance or cloud service (MongoDB Atlas)
-- **Redis**: For rate limiting (Upstash recommended)
+## 🏗️ MVC Architecture Overview
+
+This project has been refactored to follow the **Model-View-Controller (MVC)** architectural pattern, providing clear separation of concerns, improved maintainability, and better testability.
+
+### Architecture Diagram
+
+```
+┌─────────────────────────────────────────────────────────────────┐
+│                        PRESENTATION LAYER                       │
+├─────────────────────────────────────────────────────────────────┤
+│  Frontend (Next.js)           │  Backend (FastAPI)              │
+│  ┌─────────────────────────┐  │  ┌─────────────────────────┐    │
+│  │        VIEWS            │  │  │     CONTROLLERS         │    │
+│  │  - AnalysisView.js      │  │  │  - AnalysisController   │    │
+│  │  - DashboardView.js     │  │  │  - DashboardController  │    │
+│  │  - HistoryView.js       │  │  │  - StatsController      │    │
+│  └─────────────────────────┘  │  └─────────────────────────┘    │
+└─────────────────────────────────────────────────────────────────┘
+┌─────────────────────────────────────────────────────────────────┐
+│                        BUSINESS LAYER                           │
+├─────────────────────────────────────────────────────────────────┤
+│  ┌─────────────────────────┐  │  ┌─────────────────────────┐    │
+│  │       SERVICES          │  │  │        MODELS           │    │
+│  │  - AnalysisService      │  │  │  - AnalysisModel        │    │
+│  │  - StorageService       │  │  │  - ArticleModel         │    │
+│  │  - ApiClient            │  │  │  - SentimentModel       │    │
+│  │  - WebScrapingService   │  │  │  - URLInputModel        │    │
+│  │  - AIService            │  │  │  - TextInputModel       │    │
+│  └─────────────────────────┘  │  └─────────────────────────┘    │
+└─────────────────────────────────────────────────────────────────┘
+┌─────────────────────────────────────────────────────────────────┐
+│                        DATA LAYER                               │
+├─────────────────────────────────────────────────────────────────┤
+│  ┌─────────────────────────┐  │  ┌─────────────────────────┐    │
+│  │     REPOSITORIES        │  │  │      DATABASES          │    │
+│  │  - AnalysisRepository   │  │  │  - MongoDB              │    │
+│  │  - StorageRepository    │  │  │  - Redis (Rate Limiting)│    │
+│  └─────────────────────────┘  │  │  - Local Storage        │    │
+└─────────────────────────────────────────────────────────────────┘
+```
+
+## 📁 Project Structure
+
+```
+Sentiment-Analysis-App/
+├── src/                          # Frontend MVC Structure
+│   ├── models/                   # Data Models
+│   │   ├── ArticleModel.js       # Article data structure
+│   │   ├── SentimentModel.js     # Sentiment analysis data
+│   │   └── AnalysisModel.js      # Combined analysis model
+│   ├── services/                 # Business Logic Services
+│   │   ├── AnalysisService.js    # Main analysis business logic
+│   │   ├── StorageService.js     # Data persistence service
+│   │   └── ApiClient.js          # API communication service
+│   ├── controllers/              # Controllers
+│   │   └── AnalysisController.js # Main application controller
+│   ├── views/                    # View Components
+│   │   └── AnalysisView.js       # Main analysis interface
+│   ├── styles/                   # Styling
+│   │   └── mvc-styles.css        # MVC-specific styles
+│   └── app.js                    # Application entry point
+├── backend/                      # Backend MVC Structure
+│   ├── models/                   # Data Models
+│   │   └── analysis_model.py     # Pydantic models
+│   ├── services/                 # Business Logic Services
+│   │   ├── analysis_service.py   # Core analysis logic
+│   │   ├── web_scraping_service.py # Web scraping logic
+│   │   └── ai_service.py         # AI model operations
+│   ├── controllers/              # Controllers
+│   │   └── analysis_controller.py # HTTP request handling
+│   ├── repositories/             # Data Access Layer
+│   │   └── analysis_repository.py # Database operations
+│   └── main_mvc.py              # FastAPI application
+├── app/                         # Next.js App Router
+│   ├── api/                     # API Routes (Controllers)
+│   │   ├── analyze/route.js     # Analysis endpoint
+│   │   └── history/route.js     # History endpoint
+│   └── page.jsx                 # Main page component
+└── components/                  # Legacy UI Components (for reference)
+```
+
+## 🔧 MVC Components Breakdown
+
+### **Models (Data Layer)**
+
+#### Frontend Models
+- **`ArticleModel.js`**: Handles article data structure and validation
+- **`SentimentModel.js`**: Manages sentiment analysis data and calculations
+- **`AnalysisModel.js`**: Combines article and sentiment data
+
+#### Backend Models
+- **`analysis_model.py`**: Pydantic models for data validation and serialization
+
+### **Views (Presentation Layer)**
+
+#### Frontend Views
+- **`AnalysisView.js`**: Main analysis interface with MVC pattern
+- **`DashboardView.js`**: Dashboard visualization (planned)
+- **`HistoryView.js`**: Analysis history display (planned)
+
+### **Controllers (Business Logic Layer)**
+
+#### Frontend Controllers
+- **`AnalysisController.js`**: Manages application state and coordinates services
+
+#### Backend Controllers
+- **`analysis_controller.py`**: Handles HTTP requests and coordinates services
+
+### **Services (Business Logic)**
+
+#### Frontend Services
+- **`AnalysisService.js`**: Main business logic for analysis operations
+- **`StorageService.js`**: Local storage management
+- **`ApiClient.js`**: Backend API communication
+
+#### Backend Services
+- **`analysis_service.py`**: Core analysis business logic
+- **`web_scraping_service.py`**: Web scraping and content extraction
+- **`ai_service.py`**: AI model operations
+
+### **Repositories (Data Access)**
+
+#### Backend Repositories
+- **`analysis_repository.py`**: Database operations with MongoDB and fallback
+
+## 🚀 Key MVC Benefits
+
+### **1. Separation of Concerns**
+- **Models**: Handle data structure and business rules
+- **Views**: Manage user interface and presentation
+- **Controllers**: Coordinate between models and views
+
+### **2. Improved Maintainability**
+- Clear code organization
+- Easy to locate and modify specific functionality
+- Reduced coupling between components
+
+### **3. Better Testability**
+- Each layer can be tested independently
+- Mock dependencies easily
+- Unit tests for models, integration tests for controllers
+
+### **4. Scalability**
+- Easy to add new features
+- Modular architecture supports team development
+- Clear interfaces between layers
+
+### **5. Code Reusability**
+- Models can be reused across different views
+- Services can be shared between controllers
+- Clear abstractions enable component reuse
 
 ## 🛠️ Installation & Setup
 
-### 1. Clone the Repository
-```bash
-git clone https://github.com/yourusername/newsscope-ai.git
-cd newsscope-ai
-```
+### **1. Install Dependencies**
 
-### 2. Install Dependencies
 ```bash
-# Install frontend dependencies
-pnpm install
+# Frontend dependencies
+npm install
 
-# Install backend dependencies
+# Backend dependencies
 pip install -r requirements.txt
 ```
 
-### 3. Environment Configuration
+### **2. Environment Configuration**
+
 ```bash
 # Copy environment template
 cp .env.example .env.local
 ```
 
-Update `.env.local` with your configuration:
+Update `.env.local`:
 ```env
 # Frontend Configuration
 NEXT_PUBLIC_BACKEND_URL=http://localhost:8000
@@ -136,230 +251,124 @@ NEXT_PUBLIC_BACKEND_URL=http://localhost:8000
 # Database Configuration
 MONGODB_URI=your_mongodb_connection_string
 
-# Redis Configuration (Upstash)
+# Redis Configuration
 UPSTASH_REDIS_REST_URL=your_redis_url
 UPSTASH_REDIS_REST_TOKEN=your_redis_token
-
-# API Configuration
-API_RATE_LIMIT=100
-API_KEY=your_api_key
-
-# PowerBI Integration (Optional)
-POWERBI_CLIENT_ID=your_powerbi_client_id
-POWERBI_CLIENT_SECRET=your_powerbi_client_secret
-POWERBI_TENANT_ID=your_tenant_id
 ```
 
-### 4. Start Development Servers
+### **3. Run the Application**
 
-**Terminal 1 - Backend Server:**
+**Option 1: MVC Architecture (Recommended)**
 ```bash
-python backend/run_stable.py
+# Terminal 1 - Backend (MVC)
+npm run backend
+
+# Terminal 2 - Frontend
+npm run dev
 ```
 
-**Terminal 2 - Frontend Server:**
+**Option 2: Legacy Architecture**
 ```bash
-pnpm dev
+# Terminal 1 - Backend (Legacy)
+npm run backend:legacy
+
+# Terminal 2 - Frontend
+npm run dev
 ```
 
-### 5. Access the Application
-- **Frontend**: http://localhost:3000
-- **Backend API**: http://localhost:8000
-- **API Documentation**: http://localhost:8000/docs
+## 📊 API Endpoints (MVC)
 
-## 📚 API Documentation
+### **Analysis Endpoints**
+- `POST /api/analyze` - Analyze article from URL
+- `POST /api/analyze-text` - Analyze provided text
+- `GET /api/history` - Get analysis history
+- `GET /api/analysis/{id}` - Get specific analysis
+- `GET /api/raw-sentiment?url={url}` - Get raw sentiment data
 
-### Authentication
-All API requests are rate-limited to 100 requests per hour per IP address.
+### **Management Endpoints**
+- `DELETE /api/history` - Clear analysis history
+- `GET /api/stats` - Get analysis statistics
+- `GET /api/health` - Health check
 
-### Endpoints
+## 🧪 Testing MVC Architecture
 
-#### `POST /api/analyze`
-Analyzes a news article URL for sentiment.
-
-**Request:**
-```json
-{
-  "url": "https://example.com/news-article"
-}
-```
-
-**Response:**
-```json
-{
-  "heading": "Breaking News: Market Analysis",
-  "meta_description": "Analysis of current market trends",
-  "url": "https://example.com/news-article",
-  "summary_with_sentiment": "The market shows positive trends [Sentiment: Positive]",
-  "overall_sentiment": "positive",
-  "score": 0.85,
-  "timestamp": "2024-03-31T12:00:00Z"
-}
-```
-
-**Error Responses:**
-- `400`: Invalid URL or malformed request
-- `429`: Rate limit exceeded
-- `500`: Server error or processing failure
-
-#### `GET /api/history`
-Retrieves recent analysis history.
-
-**Response:**
-```json
-{
-  "analyses": [
-    {
-      "id": "uuid-string",
-      "url": "https://example.com/article",
-      "title": "Article Title",
-      "sentiment": "positive",
-      "score": 0.85,
-      "timestamp": "2024-03-31T12:00:00Z"
-    }
-  ],
-  "total": 25,
-  "page": 1
-}
-```
-
-#### `GET /api/raw-sentiment`
-Retrieves raw sentiment data for an analyzed URL.
-
-**Query Parameters:**
-- `url`: The article URL to get raw data for
-
-**Response:**
-```json
-{
-  "sentiment": "positive",
-  "score": 0.85,
-  "confidence": 0.92,
-  "raw_data": {
-    "positive": 0.85,
-    "neutral": 0.10,
-    "negative": 0.05
-  }
-}
-```
-
-#### `GET /api/powerbi-token`
-Generates PowerBI embed token (requires Azure AD configuration).
-
-**Response:**
-```json
-{
-  "token": "embed_token_string",
-  "expires": "2024-03-31T13:00:00Z"
-}
-```
-
-## 🧪 Testing
-
-### Run Tests
+### **Frontend Testing**
 ```bash
 # Run all tests
-pnpm test
+npm test
 
 # Run tests in watch mode
-pnpm test:watch
+npm run test:watch
 
 # Run tests with coverage
-pnpm test:coverage
+npm run test:coverage
 ```
 
-### Test Structure
-```
-__tests__/
-└── components/
-    ├── sentiment-analyzer.test.jsx
-    ├── results-display.test.jsx
-    └── sentiment-meter.test.jsx
-```
-
-## 🏭 Production Deployment
-
-### Build for Production
+### **Backend Testing**
 ```bash
-# Create optimized production build
-pnpm build
+# Run Python tests
+pytest backend/tests/
 
-# Start production server
-pnpm start
+# Run with coverage
+pytest --cov=backend backend/tests/
 ```
 
-### Deployment Platforms
-
-**Vercel (Recommended):**
-1. Connect your GitHub repository to Vercel
-2. Configure environment variables in Vercel dashboard
-3. Deploy automatically on git push
-
-**Self-hosted:**
-1. Build the application: `pnpm build`
-2. Start with PM2: `pm2 start npm --name "sentiment-app" -- start`
-3. Configure reverse proxy (nginx/apache)
-
-### Environment Variables for Production
-```env
-NODE_ENV=production
-NEXT_PUBLIC_BACKEND_URL=https://your-api-domain.com
-MONGODB_URI=mongodb+srv://...
-UPSTASH_REDIS_REST_URL=https://...
-UPSTASH_REDIS_REST_TOKEN=...
+### **MVC Architecture Test**
+```bash
+# Test MVC structure
+npm run mvc:test
 ```
 
-## 📊 Performance & Monitoring
+## 📈 Performance Benefits
 
-### Built-in Features
-- **Rate Limiting**: Automatic protection against abuse
-- **Caching**: Redis-based response caching
-- **Error Tracking**: Comprehensive error logging
-- **Performance Metrics**: Built-in analytics
+### **Frontend Performance**
+- **Lazy Loading**: Views load only when needed
+- **State Management**: Centralized controller state
+- **Memory Efficiency**: Proper cleanup and disposal
 
-### Monitoring
-- Monitor API response times via `/api/health`
-- Track rate limiting via Redis dashboard
-- Database performance via MongoDB Atlas
+### **Backend Performance**
+- **Service Caching**: AI models cached after first load
+- **Database Optimization**: Efficient queries with fallbacks
+- **Error Recovery**: Graceful degradation
 
-## 🛡️ Security Features
+## 🛡️ Security & Error Handling
 
-- **Rate Limiting**: 100 requests/hour per IP
-- **Input Validation**: Comprehensive URL and data validation
-- **CORS Configuration**: Secure cross-origin resource sharing
-- **Environment Variables**: Secure configuration management
-- **Error Sanitization**: Safe error message exposure
+### **MVC Security Features**
+- **Input Validation**: Models validate all inputs
+- **Error Boundaries**: Controllers handle errors gracefully
+- **Rate Limiting**: Service-level rate limiting
+- **Data Sanitization**: Repository-level data cleaning
+
+### **Error Handling Strategy**
+1. **Models**: Validate data and throw validation errors
+2. **Services**: Handle business logic errors
+3. **Controllers**: Transform errors to HTTP responses
+4. **Views**: Display user-friendly error messages
+
+
+## 📚 Learning Resources
+
+
+### **Technology Stack**
+- [Next.js Documentation](https://nextjs.org/docs)
+- [FastAPI Documentation](https://fastapi.tiangolo.com/)
+- [React Hooks](https://reactjs.org/docs/hooks-intro.html)
 
 ## 🤝 Contributing
 
-We welcome contributions! Please follow these steps:
+### **MVC Development Guidelines**
+1. **Models**: Keep business logic in models
+2. **Views**: Keep presentation logic in views
+3. **Controllers**: Keep coordination logic in controllers
+4. **Services**: Keep reusable business logic in services
+5. **Repositories**: Keep data access logic in repositories
 
-1. **Fork the repository**
-2. **Create a feature branch**: `git checkout -b feature/amazing-feature`
-3. **Make your changes** and add tests
-4. **Run tests**: `pnpm test`
-5. **Build the project**: `pnpm build`
-6. **Commit your changes**: `git commit -m 'Add amazing feature'`
-7. **Push to branch**: `git push origin feature/amazing-feature`
-8. **Open a Pull Request**
-
-### Development Guidelines
-- Follow existing code style and conventions
-- Add tests for new features
-- Update documentation as needed
-- Ensure all tests pass before submitting PR
-
-## 📝 License
-
-This project is licensed under the MIT License - see the [LICENSE](LICENSE) file for details.
-
-## 🙏 Acknowledgments
-
-- **Hugging Face** for providing excellent NLP models
-- **Radix UI** for accessible component primitives
-- **Vercel** for the amazing Next.js framework
-- **Upstash** for serverless Redis infrastructure
-- **MongoDB** for flexible document storage
+### **Code Organization**
+- Follow the established MVC structure
+- Use dependency injection for services
+- Implement proper error handling
+- Write comprehensive tests
+- Document public APIs
 
 ## 📞 Support
 
@@ -369,6 +378,7 @@ If you encounter any issues or have questions:
 2. Search [existing issues](https://github.com/yourusername/sentiment-analysis-app/issues)
 3. Create a [new issue](https://github.com/yourusername/sentiment-analysis-app/issues/new)
 
----
+## Author
+YASH NAYAN
 
-**Built with ❤️ using modern web technologies** 
+---

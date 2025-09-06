@@ -3,9 +3,13 @@ import { NextResponse } from "next/server"
 // Get backend URL from environment variable with fallback
 const BACKEND_URL = process.env.NEXT_PUBLIC_BACKEND_URL || "http://localhost:8000"
 
+/**
+ * GET /api/history - Get analysis history
+ * Controller: Handles the API request and delegates to backend service
+ */
 export async function GET() {
   try {
-    // Make request to FastAPI backend
+    // Call backend service
     const response = await fetch(`${BACKEND_URL}/history/`, {
       method: "GET",
       headers: {
@@ -13,6 +17,7 @@ export async function GET() {
       },
     })
 
+    // Handle backend response
     if (!response.ok) {
       let errorMessage = "Failed to fetch history"
       try {
@@ -28,16 +33,16 @@ export async function GET() {
       }, { status: response.status })
     }
 
+    // Transform backend response to frontend format
     const data = await response.json()
-
-    // Transform the data to match our frontend's expected format
     const transformedArticles = (data.articles || []).map((article) => ({
-      id: article.url || article.id || `article-${Date.now()}-${Math.random()}`, // Using URL as ID since MongoDB _id is excluded
+      id: article.url || article.id || `article-${Date.now()}-${Math.random()}`,
       url: article.url || "#",
       title: article.heading || article.title || "Untitled Article",
       sentiment: (article.sentiment || "neutral").toLowerCase(),
-      timestamp: article.timestamp || new Date().toISOString(), // Use timestamp if available or current time
       score: typeof article.score === 'number' ? article.score : 0,
+      confidence: article.score || 0,
+      timestamp: article.timestamp || new Date().toISOString(),
     }))
 
     return NextResponse.json({ 

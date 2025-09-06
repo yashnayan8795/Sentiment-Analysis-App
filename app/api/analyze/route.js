@@ -5,9 +5,13 @@ import { rateLimit } from '@/lib/rate-limit'
 // Define the backend URL - you should store this in an environment variable
 const BACKEND_URL = process.env.NEXT_PUBLIC_BACKEND_URL || "http://localhost:8000"
 
+/**
+ * POST /api/analyze - Analyze article sentiment
+ * Controller: Handles the API request and delegates to backend service
+ */
 export async function POST(request) {
   try {
-    // Rate limiting
+    // Rate limiting check
     const limiter = await rateLimit(request)
     if (!limiter.success) {
       return NextResponse.json(
@@ -19,9 +23,11 @@ export async function POST(request) {
       )
     }
 
+    // Parse request body
     const body = await request.json()
     const { url } = body
 
+    // Input validation
     if (!url) {
       return NextResponse.json(
         { message: "URL is required. Please provide a news article URL." },
@@ -29,7 +35,7 @@ export async function POST(request) {
       )
     }
 
-    // Validate URL format
+    // URL format validation
     try {
       const urlObj = new URL(url)
       if (!urlObj.protocol.startsWith('http')) {
@@ -42,7 +48,7 @@ export async function POST(request) {
       )
     }
 
-    // Make request to FastAPI backend
+    // Call backend service
     const response = await fetch(`${BACKEND_URL}/analyze/`, {
       method: "POST",
       headers: {
@@ -51,6 +57,7 @@ export async function POST(request) {
       body: JSON.stringify({ url }),
     })
 
+    // Handle backend response
     if (!response.ok) {
       let errorMessage = "Failed to analyze article"
       try {
@@ -75,17 +82,17 @@ export async function POST(request) {
       )
     }
 
-    // Get the raw data from FastAPI
+    // Transform backend response to frontend format
     const data = await response.json()
-
-    // Transform the data to match our frontend's expected format
     const transformedData = {
-      heading: data.heading || "No Title",
-      meta_description: data.summary || "", // Use summary as meta_description
+      id: data.url || `analysis-${Date.now()}`,
       url: data.url || url,
+      heading: data.heading || "No Title",
+      meta_description: data.summary || "",
       summary_with_sentiment: data.summary || "No summary available",
       overall_sentiment: (data.sentiment || "neutral").toLowerCase(),
       score: data.score || 0,
+      confidence: data.score || 0,
       timestamp: data.timestamp || new Date().toISOString()
     }
 
