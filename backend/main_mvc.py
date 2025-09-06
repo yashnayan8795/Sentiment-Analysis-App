@@ -3,9 +3,11 @@ Main FastAPI Application with MVC Architecture
 """
 import os
 import logging
-from fastapi import FastAPI, HTTPException
+from datetime import datetime
+from fastapi import FastAPI, HTTPException, Depends
 from fastapi.middleware.cors import CORSMiddleware
 from pymongo import MongoClient
+from pymongo.collection import Collection
 from dotenv import load_dotenv
 
 from .models.analysis_model import URLInputModel, TextInputModel
@@ -27,13 +29,17 @@ app = FastAPI(
     version="2.0.0"
 )
 
-# Enable CORS for local development
+# Enable CORS for local development and production
 allowed_origins = [
     "http://localhost:3000", 
     "http://127.0.0.1:3000", 
     "http://localhost:3001", 
     "http://127.0.0.1:3001"
 ]
+
+# Add production origins if environment variables are set
+if os.getenv("FRONTEND_URL"):
+    allowed_origins.append(os.getenv("FRONTEND_URL"))
 
 app.add_middleware(
     CORSMiddleware,
