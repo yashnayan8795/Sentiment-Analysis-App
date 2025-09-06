@@ -21,8 +21,7 @@ export default function AboutPage() {
           </h2>
           <div className="grid grid-cols-1 md:grid-cols-2 gap-6 mb-6">
             {[
-              { name: "Yash Nayan", role: "22BDS0274" },
-              { name: "Sai Siddhartha", role: "22BDS0260" },
+              { name: "Yash Nayan", role: "22BDS0274" }
             ].map((member, index) => (
               <div key={index} className="border rounded-lg p-5 shadow-md bg-white dark:bg-slate-800">
                 <h3 className="font-medium text-lg mb-1 text-slate-800 dark:text-slate-100">
