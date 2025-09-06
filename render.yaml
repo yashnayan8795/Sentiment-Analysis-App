@@ -3,7 +3,7 @@ services:
     name: sentiment-analysis-backend
     env: python
     plan: free
-    buildCommand: "pip install -r backend/requirements.txt"
+    buildCommand: "pip install --upgrade pip && pip install -r backend/requirements-minimal.txt --no-cache-dir"
     startCommand: "python backend/main_mvc.py"
     envVars:
       - key: MONGODB_URI
