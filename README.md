@@ -230,18 +230,19 @@ pip install -r requirements.txt
 
 ```bash
 # Copy environment template
-cp .env.example .env.local
+npm run setup
+# or manually: cp .env.example .env.local
 ```
 
-Update `.env.local`:
+The `.env.local` file will be created with default local development settings. You can modify it if needed:
 ```env
 # Frontend Configuration
 NEXT_PUBLIC_BACKEND_URL=http://localhost:8000
 
-# Database Configuration
-MONGODB_URI=your_mongodb_connection_string
+# Database Configuration (Optional - app works without it)
+MONGODB_URI=mongodb://localhost:27017
 
-# Redis Configuration
+# Redis Configuration (Optional - falls back to in-memory)
 UPSTASH_REDIS_REST_URL=your_redis_url
 UPSTASH_REDIS_REST_TOKEN=your_redis_token
 ```

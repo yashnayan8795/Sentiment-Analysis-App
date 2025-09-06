@@ -42,8 +42,8 @@
     "dev:legacy": "concurrently \"npm run backend:legacy\" \"npm run dev\"",
     "clean": "rm -rf .next out node_modules/.cache",
     "type-check": "tsc --noEmit",
-    "mvc:test": "node -e \"console.log('MVC Architecture Test'); import('./src/app.js')\"",
-    "mvc:build": "npm run build && echo 'MVC build completed'"
+    "setup": "copy .env.example .env.local && echo Environment file created. Please edit .env.local with your configuration.",
+    "mvc:test": "node -e \"console.log('MVC Architecture Test'); import('./src/app.js')\""
   },
   "dependencies": {
     "@hookform/resolvers": "^3.9.1",
