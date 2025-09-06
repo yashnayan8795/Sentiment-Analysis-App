@@ -1,13 +1,3 @@
-# 📰 SentiNews - MVC Architecture Implementation
-
-*AI-powered sentiment analysis application with clean MVC architecture*
-
-[![Next.js](https://img.shields.io/badge/Next.js-15.2.4-black)](https://nextjs.org/)
-[![React](https://img.shields.io/badge/React-19-blue)](https://reactjs.org/)
-[![FastAPI](https://img.shields.io/badge/FastAPI-Latest-green)](https://fastapi.tiangolo.com/)
-[![MVC](https://img.shields.io/badge/Architecture-MVC-purple)](https://en.wikipedia.org/wiki/Model%E2%80%93view%E2%80%93controller)
-
-
 # 📰 SentiNews - Intelligent News Sentiment Analyzer
 
 *Transform any news article into actionable sentiment insights with the power of AI*
